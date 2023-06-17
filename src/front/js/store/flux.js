@@ -1,6 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			token:null,
 			message: null,
 			demo: [
 				{
@@ -31,6 +32,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return data;
 				}catch(error){
 					console.log("Error loading message from backend", error)
+				}
+			},
+
+			login: async (username, password) => {
+				console.log("Login function called");
+				const opts = {
+					method:"POST",
+					headers:{
+						"Content-Type":"application/json"
+					},
+					body: JSON.stringify({
+						"username":"test",
+						"password":"test"
+					})
+				};
+				
+				try{
+					const resp = await fetch('https://snishino93-legendary-giggle-6xj7wj9j54xh7qg-3001.preview.app.github.dev/api/login', opts)
+						if(resp.status !== 200) {
+							alert ("There has been some error");
+							return false;
+						}
+					const data = await resp.json();
+						console.log("This came from the backend",data);
+						sessionStorage.setItem("token", data.access_token);
+						setStore({token: data.access_token})
+						return true;			
+				}
+				catch(error){
+					console.error("There has been an error login in")
 				}
 			},
 			changeColor: (index, color) => {
